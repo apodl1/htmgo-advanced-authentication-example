@@ -5,7 +5,7 @@ package main
 
 import (
 	"io/fs"
-	"simpleauth/internal/embedded"
+	"advancedauth/internal/embedded"
 )
 
 func GetStaticAssets() fs.FS {

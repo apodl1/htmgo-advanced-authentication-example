@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"github.com/maddalax/htmgo/framework/h"
 	"github.com/maddalax/htmgo/framework/service"
-	"simpleauth/internal/db"
+	"advancedauth/internal/db"
 )
 
 type CreateUserRequest struct {

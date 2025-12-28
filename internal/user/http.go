@@ -2,7 +2,7 @@ package user
 
 import (
 	"github.com/maddalax/htmgo/framework/h"
-	"simpleauth/internal/db"
+	"advancedauth/internal/db"
 )
 
 func GetUserOrRedirect(ctx *h.RequestContext) (db.User, bool) {

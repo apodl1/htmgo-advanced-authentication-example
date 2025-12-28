@@ -2,8 +2,8 @@ package pages
 
 import (
 	"github.com/maddalax/htmgo/framework/h"
-	"simpleauth/partials"
-	"simpleauth/ui"
+	"advancedauth/partials"
+	"advancedauth/ui"
 )
 
 func Register(ctx *h.RequestContext) *h.Page {

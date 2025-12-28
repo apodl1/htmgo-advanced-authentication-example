@@ -2,10 +2,10 @@ package pages
 
 import (
 	"github.com/maddalax/htmgo/framework/h"
-	"simpleauth/internal/db"
-	"simpleauth/internal/user"
-	"simpleauth/partials"
-	"simpleauth/ui"
+	"advancedauth/internal/db"
+	"advancedauth/internal/user"
+	"advancedauth/partials"
+	"advancedauth/ui"
 )
 
 func IndexPage(ctx *h.RequestContext) *h.Page {

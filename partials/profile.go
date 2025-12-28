@@ -3,8 +3,8 @@ package partials
 import (
 	"github.com/maddalax/htmgo/framework/h"
 	"log/slog"
-	"simpleauth/internal/user"
-	"simpleauth/ui"
+	"advancedauth/internal/user"
+	"advancedauth/ui"
 )
 
 func UpdateProfile(ctx *h.RequestContext) *h.Partial {

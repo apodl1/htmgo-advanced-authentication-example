@@ -5,8 +5,8 @@ import (
 	"github.com/maddalax/htmgo/framework/service"
 	"io/fs"
 	"net/http"
-	"simpleauth/__htmgo"
-	"simpleauth/internal/db"
+	"advancedauth/__htmgo"
+	"advancedauth/internal/db"
 )
 
 func main() {

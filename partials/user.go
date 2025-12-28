@@ -2,8 +2,8 @@ package partials
 
 import (
 	"github.com/maddalax/htmgo/framework/h"
-	"simpleauth/internal/user"
-	"simpleauth/ui"
+	"advancedauth/internal/user"
+	"advancedauth/ui"
 )
 
 func RegisterUser(ctx *h.RequestContext) *h.Partial {

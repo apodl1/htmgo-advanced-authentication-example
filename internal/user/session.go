@@ -7,7 +7,7 @@ import (
 	"github.com/maddalax/htmgo/framework/h"
 	"github.com/maddalax/htmgo/framework/service"
 	"net/http"
-	"simpleauth/internal/db"
+	"advancedauth/internal/db"
 	"time"
 )
 
