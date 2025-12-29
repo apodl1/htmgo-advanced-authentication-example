@@ -52,22 +52,26 @@ func HashPassword(password string) (string, error) {
 }
 
 func PasswordMatches(password string, hashedPassword string) bool {
+	  // Parse the parts (see above) of the database entry
 		parts := strings.Split(hashedPassword, "$")
 		if len(parts) != 6 {
 			return false
 		}
 
+		// Extract the argon2 parameters
 		var p argonParams
 		_, err := fmt.Sscanf(parts[3], "m=%d,t=%d,p=%d", &p.memory, &p.iterations, &p.parallelism)
 		if err != nil {
 			return false
 		}
 
+		// Take the salt and decode to bytes
 		salt, err := base64.RawStdEncoding.DecodeString(parts[4])
 		if err != nil {
 			return false
 		}
 
+		// Take the hashed password and decode to bytes
 		decodedHash, err := base64.RawStdEncoding.DecodeString(parts[5])
 		if err != nil {
 			return false
