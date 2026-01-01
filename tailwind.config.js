@@ -1,5 +1,10 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ["**/*.go"],
+  content: [
+    "./pages/**/*.go",
+    "./partials/**/*.go",
+    "./ui/**/*.go",
+    "./internal/**/*.go"
+  ],
   plugins: [],
 };
