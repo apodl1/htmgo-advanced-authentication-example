@@ -1,7 +1,6 @@
 package user
 
 import (
-	"context"
 	"crypto/rand"
 	"encoding/hex"
 	"github.com/maddalax/htmgo/framework/h"
@@ -11,37 +10,40 @@ import (
 	"time"
 )
 
-type CreatedSession struct {
+type Session struct {
 	Id         string
 	Expiration time.Time
 	UserId     int64
 }
 
-func CreateSession(ctx *h.RequestContext, userId int64) (CreatedSession, error) {
+func CreateSession(ctx *h.RequestContext, userId int64) (Session, error) {
 	sessionId, err := GenerateSessionID()
 
 	if err != nil {
-		return CreatedSession{}, err
+		return Session{}, err
 	}
 
 	// create a session in the database
 	queries := service.Get[db.Queries](ctx.ServiceLocator())
 
-	created := CreatedSession{
+	const sessionTime = time.Hour * 2
+	created := Session{
 		Id:         sessionId,
-		Expiration: time.Now().Add(time.Hour * 24),
+		Expiration: time.Now().UTC().Add(sessionTime),
 		UserId:     userId,
 	}
 
-	err = queries.CreateSession(context.Background(), db.CreateSessionParams{
+	err = queries.CreateSession(ctx.Request.Context(), db.CreateSessionParams{
 		UserID:    created.UserId,
 		SessionID: created.Id,
 		ExpiresAt: created.Expiration.Format(time.RFC3339),
 	})
 
 	if err != nil {
-		return CreatedSession{}, err
+		return Session{}, err
 	}
+
+	SetSessionCookie(ctx, created)
 
 	return created, nil
 }
@@ -52,18 +54,19 @@ func GetUserFromSession(ctx *h.RequestContext) (db.User, error) {
 		return db.User{}, err
 	}
 	queries := service.Get[db.Queries](ctx.ServiceLocator())
-	user, err := queries.GetUserByToken(context.Background(), cookie.Value)
+	user, err := queries.GetUserBySessionID(ctx.Request.Context(), cookie.Value)
 	if err != nil {
 		return db.User{}, err
 	}
 	return user, nil
 }
 
-func WriteSessionCookie(ctx *h.RequestContext, session CreatedSession) {
+func SetSessionCookie(ctx *h.RequestContext, session Session) {
 	cookie := http.Cookie{
 		Name:     "session_id",
 		Value:    session.Id,
 		HttpOnly: true,
+		Secure: true,
 		SameSite: http.SameSiteStrictMode,
 		Expires:  session.Expiration,
 		Path:     "/",

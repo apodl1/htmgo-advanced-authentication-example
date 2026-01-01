@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS user
     id         INTEGER PRIMARY KEY AUTOINCREMENT,
     email      TEXT NOT NULL UNIQUE,
     password   TEXT NOT NULL,
-    metadata   JSON DEFAULT '{}',
+    metadata   TEXT NOT NULL DEFAULT '{}',
     created_at TEXT DEFAULT (datetime('now')),
     updated_at TEXT DEFAULT (datetime('now'))
 );
@@ -16,9 +16,21 @@ CREATE TABLE IF NOT EXISTS sessions
 (
     id         INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id    INTEGER NOT NULL,
-    session_id      TEXT    NOT NULL UNIQUE,
+    session_id TEXT    NOT NULL UNIQUE,
     created_at TEXT DEFAULT (datetime('now')),
     expires_at TEXT    NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE
+);
+
+-- RememberMe Token table
+CREATE TABLE IF NOT EXISTS remember_tokens
+(
+    id             INTEGER PRIMARY KEY AUTOINCREMENT,
+    selector       TEXT NOT NULL UNIQUE,
+    validator_hash TEXT NOT NULL,
+    user_id        INTEGER NOT NULL,
+    created_at     TEXT DEFAULT (datetime('now')),
+    expires_at     TEXT NOT NULL,
     FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE
 );
 

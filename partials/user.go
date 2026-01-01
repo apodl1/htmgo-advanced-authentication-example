@@ -33,7 +33,7 @@ func RegisterUser(ctx *h.RequestContext) *h.Partial {
 		return ui.SwapFormError(ctx, "something went wrong")
 	}
 
-	user.WriteSessionCookie(ctx, session)
+	user.SetSessionCookie(ctx, session)
 
 	return h.RedirectPartial("/")
 }
@@ -46,6 +46,7 @@ func LoginUser(ctx *h.RequestContext) *h.Partial {
 	payload := user.LoginUserRequest{
 		Email:    ctx.FormValue("email"),
 		Password: ctx.FormValue("password"),
+		Remember: ctx.FormValue("remember") == "on",
 	}
 
 	_, err := user.Login(

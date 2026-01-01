@@ -18,6 +18,7 @@ type CreateUserRequest struct {
 type LoginUserRequest struct {
 	Email    string
 	Password string
+	Remember bool
 }
 
 type CreatedUser struct {
@@ -38,9 +39,10 @@ func Create(ctx *h.RequestContext, request CreateUserRequest) (int64, error) {
 		return 0, errors.New("something went wrong")
 	}
 
-	id, err := queries.CreateUser(context.Background(), db.CreateUserParams{
+	id, err := queries.CreateUser(ctx.Request.Context(), db.CreateUserParams{
 		Email:    request.Email,
 		Password: hashedPassword,
+		Metadata: string("{}"),
 	})
 
 	if err != nil {
@@ -59,7 +61,7 @@ func Login(ctx *h.RequestContext, request LoginUserRequest) (int64, error) {
 
 	queries := service.Get[db.Queries](ctx.ServiceLocator())
 
-	user, err := queries.GetUserByEmail(context.Background(), request.Email)
+	user, err := queries.GetUserByEmail(ctx.Request.Context(), request.Email)
 
 	if err != nil {
 		fmt.Printf("error: %s\n", err.Error())
@@ -70,13 +72,20 @@ func Login(ctx *h.RequestContext, request LoginUserRequest) (int64, error) {
 		return 0, errors.New("email or password is incorrect")
 	}
 
-	session, err := CreateSession(ctx, user.ID)
+	_, err = CreateSession(ctx, user.ID)
 
 	if err != nil {
 		return 0, errors.New("something went wrong")
 	}
 
-	WriteSessionCookie(ctx, session)
+	if request.Remember {
+		_, err = CreateRememberToken(ctx, user.ID)
+
+		if err != nil {
+			return 0, err
+		}
+
+	}
 
 	return user.ID, nil
 }
@@ -85,13 +94,30 @@ func ParseMeta(meta any) map[string]interface{} {
 	if meta == nil {
 		return map[string]interface{}{}
 	}
-	if m, ok := meta.(string); ok {
-		var dest map[string]interface{}
-		json.Unmarshal([]byte(m), &dest)
-		return dest
+
+	var data []byte
+
+	switch v := meta.(type) {
+	case []byte:
+		data = v
+	case string:
+		data = []byte(v)
+	case json.RawMessage:
+		data = v
+	case map[string]interface{}:
+		return v
+	default:
+		return map[string]interface{}{}
 	}
-	return meta.(map[string]interface{})
+
+	var dest map[string]interface{}
+	err := json.Unmarshal(data, &dest)
+	if err != nil {
+		return map[string]interface{}{}
+	}
+	return dest
 }
+
 
 func GetMetaKey(meta map[string]interface{}, key string) string {
 	if val, ok := meta[key]; ok {

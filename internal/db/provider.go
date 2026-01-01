@@ -11,7 +11,7 @@ import (
 var ddl string
 
 func Provide() *Queries {
-	db, err := sql.Open("sqlite3", "file:htmgo-user-example.db?cache=shared&_fk=1")
+	db, err := sql.Open("sqlite3", "file:htmgo-user-example-advanced.db?cache=shared&_fk=1")
 
 	if err != nil {
 		panic(err)
