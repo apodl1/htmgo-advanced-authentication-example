@@ -34,11 +34,18 @@ func Input(props InputProps) *h.Element {
 
 	input := h.Input(
 		props.Type,
-		h.Class("border p-2 rounded focus:outline-none focus:ring focus:ring-slate-800"),
+		h.If(props.Id != "", h.Id(props.Id)),
+		h.ClassX("rounded focus:outline-none focus:ring focus:ring-slate-800", map[string]bool{
+			// Standard input styles
+			"border p-2": props.Type != "checkbox",
+			// Checkbox specific styles
+			"w-4 h-4 cursor-pointer accent-slate-800": props.Type == "checkbox",
+		}),
 		h.If(
 			props.Name != "",
 			h.Name(props.Name),
 		),
+
 		h.If(
 			props.Children != nil,
 			h.Children(props.Children...),
@@ -58,21 +65,24 @@ func Input(props InputProps) *h.Element {
 		validation,
 	)
 
+	label := h.If(
+		props.Label != "",
+		h.Label(
+			h.If(props.Id != "", h.Attribute("for", props.Id)),
+			h.Text(props.Label),
+		),
+	)
+
 	wrapped := h.Div(
-		h.If(
-			props.Id != "",
-			h.Id(props.Id),
-		),
-		h.Class("flex flex-col gap-1"),
-		h.If(
-			props.Label != "",
-			h.Label(
-				h.Text(props.Label),
-			),
-		),
+		h.ClassX("", map[string]bool{
+			"flex flex-col gap-1":           		props.Type != "checkbox",
+			"flex flex-row items-center gap-2": props.Type == "checkbox",
+		}),
+		h.If(props.Type != "checkbox", label),
 		input,
+		h.If(props.Type == "checkbox", label),
 		h.Div(
-			h.Id(props.Id+"-error"),
+			h.If(props.Id != "", h.Id(props.Id+"-error")),
 			h.Class("text-red-500"),
 		),
 	)
