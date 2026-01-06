@@ -1,4 +1,4 @@
-## htmgo advanced authentication example project
+## htmgo advanced authentication example
 
 A more advanced [htmgo](https://github.com/maddalax/htmgo) example web app build upon the [simple-auth](https://github.com/maddalax/htmgo/tree/master/examples/simple-auth) provided in the official repo.
 
