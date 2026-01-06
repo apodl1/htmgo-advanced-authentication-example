@@ -61,3 +61,11 @@ WHERE user_id = ?;
 -- name: DeleteAllUserRememberTokens :exec
 DELETE FROM remember_tokens
 WHERE user_id = ?;
+
+-- name: DeleteExpiredSessions :exec
+DELETE FROM sessions
+WHERE expires_at < datetime('now');
+
+-- name: DeleteExpiredRememberTokens :exec
+DELETE FROM remember_tokens
+WHERE expires_at < datetime('now');

@@ -89,6 +89,26 @@ func (q *Queries) DeleteAllUserSessions(ctx context.Context, userID int64) error
 	return err
 }
 
+const deleteExpiredRememberTokens = `-- name: DeleteExpiredRememberTokens :exec
+DELETE FROM remember_tokens
+WHERE expires_at < datetime('now')
+`
+
+func (q *Queries) DeleteExpiredRememberTokens(ctx context.Context) error {
+	_, err := q.db.ExecContext(ctx, deleteExpiredRememberTokens)
+	return err
+}
+
+const deleteExpiredSessions = `-- name: DeleteExpiredSessions :exec
+DELETE FROM sessions
+WHERE expires_at < datetime('now')
+`
+
+func (q *Queries) DeleteExpiredSessions(ctx context.Context) error {
+	_, err := q.db.ExecContext(ctx, deleteExpiredSessions)
+	return err
+}
+
 const deleteRememberTokenBySelector = `-- name: DeleteRememberTokenBySelector :exec
 DELETE FROM remember_tokens
 WHERE selector = ?
